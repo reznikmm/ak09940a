@@ -1,0 +1,28 @@
+# SPDX-FileCopyrightText: 2024 Max Reznik <reznikmm@gmail.com>
+#
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+
+name = "ak09940_examples"
+description = "Examples for AK09940 sensor"
+version = "1.0.0"
+
+authors = ["Max Reznik"]
+maintainers = ["Max Reznik <reznikmm@gmail.com>"]
+maintainers-logins = ["reznikmm"]
+licenses = "Apache-2.0 WITH LLVM-exception"
+website = "https://github.com/reznikmm/ak09940"
+project-files = ["ak09940_put/ak09940_put.gpr", "ak09940_lcd/ak09940_lcd.gpr"]
+
+[configuration]
+generate_ada = false
+generate_c = false
+generate_gpr = false
+
+[[depends-on]]
+gnat_arm_elf = "^12.2"
+ak09940 = "*"
+stm32_f4ve_full = "*"
+
+[[pins]]
+ak09940 = { path='..' }
+stm32_f4ve_full = { path='../adl/boards/stm32_f4ve' }

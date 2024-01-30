@@ -1,0 +1,25 @@
+name = "ak09940"
+description = "Driver for AK09940 magnetic sensor"
+version = "1.0.0"
+
+authors = ["Max Reznik"]
+maintainers = ["Max Reznik <reznikmm@gmail.com>"]
+maintainers-logins = ["reznikmm"]
+licenses = "Apache-2.0 WITH LLVM-exception"
+website = "https://github.com/reznikmm/ak09940"
+tags = ["sensor", "magnetometer", "driver"]
+project-files = ["gnat/ak09940.gpr"]
+
+[configuration]
+output_dir = "gnat"
+generate_ada = false
+generate_c = false
+
+[build-switches]
+development.optimization = ["-O0"]
+development.style_checks = ["-gnaty"]
+development.contracts = "Yes"
+
+[[depends-on]]
+hal = "~0.3.0"
+gnat = ">=11 & <2000" # Uses Ada 2022 syntax
