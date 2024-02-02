@@ -15,7 +15,8 @@ generic
    I2C_Address : I2C_Address_Range;
 package AK09940.I2C is
 
-   function Check_Chip_Id return Boolean;
+   function Check_Chip_Id
+     (Expect : Interfaces.Unsigned_8 := AK09940_Chip_Id) return Boolean;
    --  Read the chip ID and check that it matches the expected value.
 
    procedure Reset (Success : out Boolean);

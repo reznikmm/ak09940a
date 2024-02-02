@@ -29,7 +29,9 @@ private generic
 
 package AK09940.Internal is
 
-   function Check_Chip_Id (Device : Device_Context) return Boolean;
+   function Check_Chip_Id
+     (Device : Device_Context;
+      Expect : Interfaces.Unsigned_8) return Boolean;
    --  Read the chip ID and check that it matches
 
    procedure Configure

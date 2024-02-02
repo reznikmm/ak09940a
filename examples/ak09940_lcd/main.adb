@@ -266,7 +266,7 @@ begin
    end;
 
    --  Look for AK09940 chip
-   if not Sensor.Check_Chip_Id then
+   if not Sensor.Check_Chip_Id (AK09940.AK09940A_Chip_Id) then
       Ada.Text_IO.Put_Line ("AK09940 not found.");
       raise Program_Error;
    end if;

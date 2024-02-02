@@ -13,13 +13,16 @@ package body AK09940.Internal is
    -- Check_Chip_Id --
    -------------------
 
-   function Check_Chip_Id (Device : Device_Context) return Boolean is
+   function Check_Chip_Id
+     (Device : Device_Context;
+      Expect : Interfaces.Unsigned_8) return Boolean
+   is
       Ok   : Boolean;
       Data : Byte_Array (16#00# .. 16#01#);
    begin
       Read (Device, Data, Ok);
 
-      return Ok and Data = [16#48#, 16#A1#];
+      return Ok and Data = [16#48#, Expect];
    end Check_Chip_Id;
 
    ---------------

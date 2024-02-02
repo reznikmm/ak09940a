@@ -23,7 +23,9 @@ package AK09940.SPI_Sensors is
       Success : out Boolean);
    --  Disable I2C interface
 
-   function Check_Chip_Id (Self : AK09940_Sensor) return Boolean;
+   function Check_Chip_Id
+     (Self   : AK09940_Sensor;
+      Expect : Interfaces.Unsigned_8 := AK09940_Chip_Id) return Boolean;
    --  Read the chip ID and check that it matches the expected value.
 
    procedure Reset

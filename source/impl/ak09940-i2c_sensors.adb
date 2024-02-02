@@ -26,8 +26,10 @@ package body AK09940.I2C_Sensors is
    -- Check_Chip_Id --
    -------------------
 
-   function Check_Chip_Id (Self : AK09940_Sensor) return Boolean is
-      (Sensor.Check_Chip_Id (Self));
+   function Check_Chip_Id
+     (Self   : AK09940_Sensor;
+      Expect : Interfaces.Unsigned_8 := AK09940_Chip_Id) return Boolean is
+        (Sensor.Check_Chip_Id (Self, Expect));
 
    ---------------
    -- Configure --

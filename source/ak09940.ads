@@ -66,6 +66,8 @@ package AK09940 is
 
    subtype I2C_Address_Range is Interfaces.Unsigned_8 range 16#0C# .. 16#0F#;
 
+   AK09940_Chip_Id  : constant := 16#A1#;
+   AK09940A_Chip_Id : constant := 16#A3#;
 private
    subtype Register_Address is Natural range 16#00# .. 16#7F#;
    --  Sensor registers addresses
