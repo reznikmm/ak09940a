@@ -3,24 +3,24 @@
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 ----------------------------------------------------------------
 
-with "ak09940_config.gpr";
-project AK09940 is
+with "ak09940a_config.gpr";
+project AK09940A is
 
-   for Library_Name use "ak09940";
-   for Library_Version use Project'Library_Name & ".so." & AK09940_Config.Crate_Version;
+   for Library_Name use "ak09940a";
+   for Library_Version use Project'Library_Name & ".so." & AK09940A_Config.Crate_Version;
 
    for Source_Dirs use ("../source", "../source/impl");
-   for Object_Dir use "../.obj/" & AK09940_Config.Build_Profile;
+   for Object_Dir use "../.obj/" & AK09940A_Config.Build_Profile;
    for Create_Missing_Dirs use "True";
    for Library_Dir use "../.lib";
 
    type Library_Type_Type is ("relocatable", "static", "static-pic");
    Library_Type : Library_Type_Type :=
-     external ("AK09940_LIBRARY_TYPE", external ("LIBRARY_TYPE", "static"));
+     external ("AK09940A_LIBRARY_TYPE", external ("LIBRARY_TYPE", "static"));
    for Library_Kind use Library_Type;
 
    package Compiler is
-      for Default_Switches ("Ada") use AK09940_Config.Ada_Compiler_Switches;
+      for Default_Switches ("Ada") use AK09940A_Config.Ada_Compiler_Switches;
    end Compiler;
 
    package Binder is
@@ -31,4 +31,4 @@ project AK09940 is
       for Artifacts (".") use ("share");
    end Install;
 
-end AK09940;
+end AK09940A;

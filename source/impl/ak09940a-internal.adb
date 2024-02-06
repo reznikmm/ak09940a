@@ -7,7 +7,7 @@ pragma Ada_2022;
 
 with Ada.Unchecked_Conversion;
 
-package body AK09940.Internal is
+package body AK09940A.Internal is
 
    -------------------
    -- Check_Chip_Id --
@@ -195,4 +195,4 @@ package body AK09940.Internal is
       Write (Device, 16#30#, Interfaces.Unsigned_8 (Value - 1), Success);
    end Set_FIFO_Water_Mark;
 
-end AK09940.Internal;
+end AK09940A.Internal;

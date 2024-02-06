@@ -5,42 +5,46 @@
 
 pragma Ada_2022;
 
-with AK09940.Internal;
+with AK09940A.Internal;
 
-package body AK09940.I2C_Sensors is
+package body AK09940A.I2C is
+
+   type Chip_Settings is null record;
+
+   Chip : Chip_Settings;
 
    procedure Read
-     (Self    : AK09940_Sensor'Class;
+     (Ignore  : Chip_Settings;
       Data    : out Byte_Array;
       Success : out Boolean);
+   --  Read registers starting from Data'First
 
    procedure Write
-     (Self    : AK09940_Sensor'Class;
+     (Ignore  : Chip_Settings;
       Address : Register_Address;
       Data    : Interfaces.Unsigned_8;
       Success : out Boolean);
+   --  Write a register (at Address) with Data
 
-   package Sensor is new Internal (AK09940_Sensor'Class, Read, Write);
+   package Sensor is new Internal (Chip_Settings, Read, Write);
 
    -------------------
    -- Check_Chip_Id --
    -------------------
 
    function Check_Chip_Id
-     (Self   : AK09940_Sensor;
-      Expect : Interfaces.Unsigned_8 := AK09940_Chip_Id) return Boolean is
-        (Sensor.Check_Chip_Id (Self, Expect));
+     (Expect : Interfaces.Unsigned_8 := AK09940A_Chip_Id) return Boolean is
+       (Sensor.Check_Chip_Id (Chip, Expect));
 
    ---------------
    -- Configure --
    ---------------
 
    procedure Configure
-     (Self    : AK09940_Sensor;
-      Value   : Sensor_Configuration;
+     (Value   : Sensor_Configuration;
       Success : out Boolean) is
    begin
-      Sensor.Configure (Self, Value, Success);
+      Sensor.Configure (Chip, Value, Success);
    end Configure;
 
    ------------------------
@@ -48,37 +52,35 @@ package body AK09940.I2C_Sensors is
    ------------------------
 
    procedure Enable_Temperature
-     (Self    : AK09940_Sensor;
-      Value   : Boolean;
+     (Value   : Boolean;
       Success : out Boolean) is
    begin
-      Sensor.Enable_Temperature (Self, Value, Success);
+      Sensor.Enable_Temperature (Chip, Value, Success);
    end Enable_Temperature;
 
    -------------------
    -- Is_Data_Ready --
    -------------------
 
-   function Is_Data_Ready (Self : AK09940_Sensor) return Boolean is
-      (Sensor.Is_Data_Ready (Self));
+   function Is_Data_Ready return Boolean is (Sensor.Is_Data_Ready (Chip));
 
    ----------
    -- Read --
    ----------
 
    procedure Read
-     (Self    : AK09940_Sensor'Class;
+     (Ignore  : Chip_Settings;
       Data    : out Byte_Array;
       Success : out Boolean)
    is
       use type HAL.I2C.I2C_Status;
       use type HAL.UInt10;
 
-      Status : HAL.I2C.I2C_Status;
       Output : HAL.I2C.I2C_Data (Data'Range);
+      Status : HAL.I2C.I2C_Status;
    begin
-      Self.I2C_Port.Mem_Read
-        (Addr          => 2 * HAL.UInt10 (Self.I2C_Address),
+      I2C_Port.Mem_Read
+        (Addr          => 2 * HAL.UInt10 (I2C_Address),
          Mem_Addr      => HAL.UInt16 (Data'First),
          Mem_Addr_Size => HAL.I2C.Memory_Size_8b,
          Data          => Output,
@@ -94,11 +96,10 @@ package body AK09940.I2C_Sensors is
    ----------------------
 
    procedure Read_Measurement
-     (Self    : AK09940_Sensor;
-      Value   : out Magnetic_Field_Vector;
+     (Value   : out Magnetic_Field_Vector;
       Success : out Boolean) is
    begin
-      Sensor.Read_Measurement (Self, Value, Success);
+      Sensor.Read_Measurement (Chip, Value, Success);
    end Read_Measurement;
 
    --------------------------
@@ -106,22 +107,19 @@ package body AK09940.I2C_Sensors is
    --------------------------
 
    procedure Read_Raw_Measurement
-     (Self    : AK09940_Sensor;
-      Value   : out Raw_Vector;
+     (Value   : out Raw_Vector;
       Success : out Boolean) is
    begin
-      Sensor.Read_Raw_Measurement (Self, Value, Success);
+      Sensor.Read_Raw_Measurement (Chip, Value, Success);
    end Read_Raw_Measurement;
 
    -----------
    -- Reset --
    -----------
 
-   procedure Reset
-     (Self    : AK09940_Sensor;
-      Success : out Boolean) is
+   procedure Reset (Success : out Boolean) is
    begin
-      Sensor.Reset (Self, Success);
+      Sensor.Reset (Chip, Success);
    end Reset;
 
    -------------------------
@@ -129,11 +127,10 @@ package body AK09940.I2C_Sensors is
    -------------------------
 
    procedure Set_FIFO_Water_Mark
-     (Self    : AK09940_Sensor;
-      Value   : Watermark_Level;
+     (Value   : Watermark_Level;
       Success : out Boolean) is
    begin
-      Sensor.Set_FIFO_Water_Mark (Self, Value, Success);
+      Sensor.Set_FIFO_Water_Mark (Chip, Value, Success);
    end Set_FIFO_Water_Mark;
 
    -----------
@@ -141,7 +138,7 @@ package body AK09940.I2C_Sensors is
    -----------
 
    procedure Write
-     (Self    : AK09940_Sensor'Class;
+     (Ignore  : Chip_Settings;
       Address : Register_Address;
       Data    : Interfaces.Unsigned_8;
       Success : out Boolean)
@@ -151,8 +148,8 @@ package body AK09940.I2C_Sensors is
 
       Status : HAL.I2C.I2C_Status;
    begin
-      Self.I2C_Port.Mem_Write
-        (Addr          => 2 * HAL.UInt10 (Self.I2C_Address),
+      I2C_Port.Mem_Write
+        (Addr          => 2 * HAL.UInt10 (I2C_Address),
          Mem_Addr      => HAL.UInt16 (Address),
          Mem_Addr_Size => HAL.I2C.Memory_Size_8b,
          Data          => [HAL.UInt8 (Data)],
@@ -161,4 +158,4 @@ package body AK09940.I2C_Sensors is
       Success := Status = HAL.I2C.Ok;
    end Write;
 
-end AK09940.I2C_Sensors;
+end AK09940A.I2C;

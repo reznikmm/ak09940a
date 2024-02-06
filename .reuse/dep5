@@ -1,8 +1,8 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: ak09940
+Upstream-Name: ak09940a
 Upstream-Contact: Max Reznik <reznikmm@gmail.com>
-Source: https://github.com/reznikmm/ak09940
+Source: https://github.com/reznikmm/ak09940a
 
-Files: README.md alire.toml examples/ak09940_put/README.md examples/ak09940_lcd/README.md examples/ak09940_lcd/ak09940_lcd_x2.png
+Files: README.md alire.toml examples/ak09940a_put/README.md examples/ak09940a_lcd/README.md examples/ak09940a_lcd/ak09940a_lcd_x2.png
 Copyright: 2024 Max Reznik <reznikmm@gmail.com>
 License: Apache-2.0 WITH LLVM-exception

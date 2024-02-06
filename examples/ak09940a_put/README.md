@@ -1,4 +1,4 @@
-# AK09940 demo
+# AK09940A demo
 
 This folder contains a demonstration program showcasing the functionality
 of the magnetometer sensor using the STM32 F4VE board.
@@ -8,13 +8,13 @@ interface.
 ## Requirements
 
 * STM32 F4VE development board
-* Any AK09940 module
+* Any AK09940A module
 * ST-Link V2 debug probe
 * Development environment compatible with STM32F4 microcontrollers
 
 ## Setup
 
-* Attach AK09940 by I2C to PB9 (SDA), PB8 (SCL)
+* Attach AK09940A by I2C to PB9 (SDA), PB8 (SCL)
 * Attach the debug probe to the designated port on the STM32F4VE board.
 * Connect the STM32 F4VE board to your development environment.
 

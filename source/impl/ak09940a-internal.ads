@@ -10,7 +10,7 @@ private generic
      (Device  : Device_Context;
       Data    : out Byte_Array;
       Success : out Boolean);
-   --  Read the values from the AK09940 chip registers into Data.
+   --  Read the values from the AK09940A chip registers into Data.
    --  Each element in the Data corresponds to a specific register address
    --  in the chip, so Data'Range determines the range of registers to read.
    --  The value read from register X will be stored in Data(X), so
@@ -21,13 +21,13 @@ private generic
       Address : Register_Address;
       Data    : Interfaces.Unsigned_8;
       Success : out Boolean);
-   --  Write the Data values to the AK09940 chip registers.
+   --  Write the Data values to the AK09940A chip registers.
    --  Each element in the Data corresponds to a specific register address
    --  in the chip, so Data'Range determines the range of registers to write.
    --  The value read from Data(X) will be stored in register X, so
    --  Data'Range should be of the Register_Address subtype.
 
-package AK09940.Internal is
+package AK09940A.Internal is
 
    function Check_Chip_Id
      (Device : Device_Context;
@@ -79,4 +79,4 @@ package AK09940.Internal is
       Success : out Boolean);
    --  Read the raw measurement values from the sensor
 
-end AK09940.Internal;
+end AK09940A.Internal;

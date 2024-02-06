@@ -15,27 +15,27 @@
             }
         },
         {
-            "label": "Flash AK09940_Put with ST-Util",
+            "label": "Flash AK09940A_Put with ST-Util",
             "type": "shell",
-            "command": "alr exec -- arm-eabi-objcopy -O binary ak09940_put/.obj/main ak09940_put/.obj/main.bin && st-flash --connect-under-reset write ak09940_put/.obj/main.bin 0x08000000",
+            "command": "alr exec -- arm-eabi-objcopy -O binary ak09940a_put/.obj/main ak09940a_put/.obj/main.bin && st-flash --connect-under-reset write ak09940a_put/.obj/main.bin 0x08000000",
             "problemMatcher": []
         },
         {
-            "label": "Flash AK09940_Put with OpenOCD",
+            "label": "Flash AK09940A_Put with OpenOCD",
             "type": "shell",
-            "command": "alr exec -- arm-eabi-objcopy -O binary ak09940_put/.obj/main ak09940_put/.obj/main.bin && openocd -f interface/stlink.cfg -f target/stm32f4x.cfg -c 'program ak09940_put/.obj/main.bin verify reset exit 0x08000000'",
+            "command": "alr exec -- arm-eabi-objcopy -O binary ak09940a_put/.obj/main ak09940a_put/.obj/main.bin && openocd -f interface/stlink.cfg -f target/stm32f4x.cfg -c 'program ak09940a_put/.obj/main.bin verify reset exit 0x08000000'",
             "problemMatcher": []
         },
         {
-            "label": "Flash AK09940_LCD with ST-Util",
+            "label": "Flash AK09940A_LCD with ST-Util",
             "type": "shell",
-            "command": "alr exec -- arm-eabi-objcopy -O binary ak09940_lcd/.obj/main ak09940_lcd/.obj/main.bin && st-flash --connect-under-reset write ak09940_lcd/.obj/main.bin 0x08000000",
+            "command": "alr exec -- arm-eabi-objcopy -O binary ak09940a_lcd/.obj/main ak09940a_lcd/.obj/main.bin && st-flash --connect-under-reset write ak09940a_lcd/.obj/main.bin 0x08000000",
             "problemMatcher": []
         },
         {
-            "label": "Flash AK09940_LCD with OpenOCD",
+            "label": "Flash AK09940A_LCD with OpenOCD",
             "type": "shell",
-            "command": "alr exec -- arm-eabi-objcopy -O binary ak09940_lcd/.obj/main ak09940_lcd/.obj/main.bin && openocd -f interface/stlink.cfg -f target/stm32f4x.cfg -c 'program ak09940_lcd/.obj/main.bin verify reset exit 0x08000000'",
+            "command": "alr exec -- arm-eabi-objcopy -O binary ak09940a_lcd/.obj/main ak09940a_lcd/.obj/main.bin && openocd -f interface/stlink.cfg -f target/stm32f4x.cfg -c 'program ak09940a_lcd/.obj/main.bin verify reset exit 0x08000000'",
             "problemMatcher": []
         }
     ]

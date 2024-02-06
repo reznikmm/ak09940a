@@ -5,9 +5,9 @@
 
 pragma Ada_2022;
 
-with AK09940.Internal;
+with AK09940A.Internal;
 
-package body AK09940.I2C is
+package body AK09940A.SPI is
 
    type Chip_Settings is null record;
 
@@ -33,7 +33,7 @@ package body AK09940.I2C is
    -------------------
 
    function Check_Chip_Id
-     (Expect : Interfaces.Unsigned_8 := AK09940_Chip_Id) return Boolean is
+     (Expect : Interfaces.Unsigned_8 := AK09940A_Chip_Id) return Boolean is
        (Sensor.Check_Chip_Id (Chip, Expect));
 
    ---------------
@@ -58,6 +58,15 @@ package body AK09940.I2C is
       Sensor.Enable_Temperature (Chip, Value, Success);
    end Enable_Temperature;
 
+   ----------------
+   -- Initialize --
+   ----------------
+
+   procedure Initialize (Success : out Boolean) is
+   begin
+      Sensor.Disable_I2C (Chip, Success);
+   end Initialize;
+
    -------------------
    -- Is_Data_Ready --
    -------------------
@@ -73,22 +82,25 @@ package body AK09940.I2C is
       Data    : out Byte_Array;
       Success : out Boolean)
    is
-      use type HAL.I2C.I2C_Status;
-      use type HAL.UInt10;
+      use type HAL.UInt8;
+      use all type HAL.SPI.SPI_Status;
 
-      Output : HAL.I2C.I2C_Data (Data'Range);
-      Status : HAL.I2C.I2C_Status;
+      Addr : constant HAL.UInt8 := HAL.UInt8 (Data'First) or 16#80#;
+      Status : HAL.SPI.SPI_Status;
+      Output : HAL.SPI.SPI_Data_8b (Data'Range);
    begin
-      I2C_Port.Mem_Read
-        (Addr          => 2 * HAL.UInt10 (I2C_Address),
-         Mem_Addr      => HAL.UInt16 (Data'First),
-         Mem_Addr_Size => HAL.I2C.Memory_Size_8b,
-         Data          => Output,
-         Status        => Status);
+      SPI.SPI_CS.Clear;
 
-      Data := [for J of Output => Interfaces.Unsigned_8 (J)];
+      SPI_Port.Transmit (HAL.SPI.SPI_Data_8b'(1 => Addr), Status);
 
-      Success := Status = HAL.I2C.Ok;
+      if Status = Ok then
+         SPI_Port.Receive (Output, Status);
+         Data := [for J of Output => Interfaces.Unsigned_8 (J)];
+      end if;
+
+      SPI.SPI_CS.Set;
+
+      Success := Status = Ok;
    end Read;
 
    ----------------------
@@ -143,19 +155,20 @@ package body AK09940.I2C is
       Data    : Interfaces.Unsigned_8;
       Success : out Boolean)
    is
-      use type HAL.I2C.I2C_Status;
-      use type HAL.UInt10;
+      use all type HAL.SPI.SPI_Status;
 
-      Status : HAL.I2C.I2C_Status;
+      Addr : constant HAL.UInt8 := HAL.UInt8 (Address);
+      Status : HAL.SPI.SPI_Status;
    begin
-      I2C_Port.Mem_Write
-        (Addr          => 2 * HAL.UInt10 (I2C_Address),
-         Mem_Addr      => HAL.UInt16 (Address),
-         Mem_Addr_Size => HAL.I2C.Memory_Size_8b,
-         Data          => [HAL.UInt8 (Data)],
-         Status        => Status);
+      SPI.SPI_CS.Clear;
 
-      Success := Status = HAL.I2C.Ok;
+      SPI_Port.Transmit
+        (HAL.SPI.SPI_Data_8b'[Addr, HAL.UInt8 (Data)],
+         Status);
+
+      SPI.SPI_CS.Set;
+
+      Success := Status = Ok;
    end Write;
 
-end AK09940.I2C;
+end AK09940A.SPI;

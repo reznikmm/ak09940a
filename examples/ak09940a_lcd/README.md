@@ -1,11 +1,11 @@
-# AK09940 LCD demo
+# AK09940A LCD demo
 
 This folder contains a demonstration program showcasing the functionality
 of a magnetometer sensor using the STM32 F4VE board
 and an LCD display included in the kit. The program features a straightforward
 graphical user interface (GUI) for configuring sensor parameters.
 
-![Demo screenshot](ak09940_lcd_x2.png)
+![Demo screenshot](ak09940a_lcd_x2.png)
 
 ## Overview
 
@@ -21,13 +21,13 @@ frequency (from 10 HZ to 400 Hz).
 ## Requirements
 
 * STM32 F4VE development board
-* Any AK09940 module
+* Any AK09940A module
 * Compatible LCD display/touch panel included in the kit
 * Development environment compatible with STM32F4 microcontrollers
 
 ## Setup
 
-* Attach AK09940 by I2C to PB9 (SDA), PB8 (SCL)
+* Attach AK09940A by I2C to PB9 (SDA), PB8 (SCL)
 * Attach the LCD display to the designated port on the STM32F4VE board.
 * Connect the STM32 F4VE board to your development environment.
 

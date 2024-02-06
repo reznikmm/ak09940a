@@ -6,8 +6,8 @@
     "configurations": [
         {
             "cwd": "${workspaceRoot}",
-            "executable": "${workspaceFolder}/ak09940_put/.obj/main",
-            "name": "Debug AK09940_Put with OpenOCD",
+            "executable": "${workspaceFolder}/ak09940a_put/.obj/main",
+            "name": "Debug AK09940A_Put with OpenOCD",
             "request": "launch",
             "type": "cortex-debug",
             "servertype": "openocd",
@@ -18,8 +18,8 @@
         },
         {
             "cwd": "${workspaceRoot}",
-            "executable": "${workspaceFolder}/ak09940_put/.obj/main",
-            "name": "Debug AK09940_Put with ST-Util",
+            "executable": "${workspaceFolder}/ak09940a_put/.obj/main",
+            "name": "Debug AK09940A_Put with ST-Util",
             "request": "launch",
             "type": "cortex-debug",
             "servertype": "stutil",
@@ -28,8 +28,8 @@
         },
         {
             "cwd": "${workspaceRoot}",
-            "executable": "${workspaceFolder}/ak09940_lcd/.obj/main",
-            "name": "Debug AK09940_LCD with OpenOCD",
+            "executable": "${workspaceFolder}/ak09940a_lcd/.obj/main",
+            "name": "Debug AK09940A_LCD with OpenOCD",
             "request": "launch",
             "type": "cortex-debug",
             "servertype": "openocd",
@@ -40,8 +40,8 @@
         },
         {
             "cwd": "${workspaceRoot}",
-            "executable": "${workspaceFolder}/ak09940_lcd/.obj/main",
-            "name": "Debug AK09940_LCD with ST-Util",
+            "executable": "${workspaceFolder}/ak09940a_lcd/.obj/main",
+            "name": "Debug AK09940A_LCD with ST-Util",
             "request": "launch",
             "type": "cortex-debug",
             "servertype": "stutil",

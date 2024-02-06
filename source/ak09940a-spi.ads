@@ -3,10 +3,10 @@
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 ----------------------------------------------------------------
 
---  This package offers a straightforward method for setting up the AK09940
+--  This package offers a straightforward method for setting up the AK09940A
 --  when connected via SPI, especially useful when the use of only one sensor
 --  is required. If you need multiple sensors, it is preferable to use the
---  AK09940.SPI_Sensors package, which provides the appropriate tagged type.
+--  AK09940A.SPI_Sensors package, which provides the appropriate tagged type.
 
 with HAL.GPIO;
 with HAL.SPI;
@@ -14,13 +14,13 @@ with HAL.SPI;
 generic
    SPI_Port : not null HAL.SPI.Any_SPI_Port;
    SPI_CS   : not null HAL.GPIO.Any_GPIO_Point;
-package AK09940.SPI is
+package AK09940A.SPI is
 
    procedure Initialize (Success : out Boolean);
    --  Disable I2C interface
 
    function Check_Chip_Id
-     (Expect : Interfaces.Unsigned_8 := AK09940_Chip_Id) return Boolean;
+     (Expect : Interfaces.Unsigned_8 := AK09940A_Chip_Id) return Boolean;
    --  Read the chip ID and check that it matches the expected value.
 
    procedure Reset (Success : out Boolean);
@@ -61,4 +61,4 @@ package AK09940.SPI is
       Success : out Boolean);
    --  Read the raw measurement values from the sensor
 
-end AK09940.SPI;
+end AK09940A.SPI;

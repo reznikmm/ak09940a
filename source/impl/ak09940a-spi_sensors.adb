@@ -5,46 +5,42 @@
 
 pragma Ada_2022;
 
-with AK09940.Internal;
+with AK09940A.Internal;
 
-package body AK09940.SPI is
-
-   type Chip_Settings is null record;
-
-   Chip : Chip_Settings;
+package body AK09940A.SPI_Sensors is
 
    procedure Read
-     (Ignore  : Chip_Settings;
+     (Self    : AK09940A_Sensor'Class;
       Data    : out Byte_Array;
       Success : out Boolean);
-   --  Read registers starting from Data'First
 
    procedure Write
-     (Ignore  : Chip_Settings;
+     (Self    : AK09940A_Sensor'Class;
       Address : Register_Address;
       Data    : Interfaces.Unsigned_8;
       Success : out Boolean);
-   --  Write a register (at Address) with Data
 
-   package Sensor is new Internal (Chip_Settings, Read, Write);
+   package Sensor is new Internal (AK09940A_Sensor'Class, Read, Write);
 
    -------------------
    -- Check_Chip_Id --
    -------------------
 
    function Check_Chip_Id
-     (Expect : Interfaces.Unsigned_8 := AK09940_Chip_Id) return Boolean is
-       (Sensor.Check_Chip_Id (Chip, Expect));
+     (Self : AK09940A_Sensor;
+      Expect : Interfaces.Unsigned_8 := AK09940A_Chip_Id) return Boolean is
+        (Sensor.Check_Chip_Id (Self, Expect));
 
    ---------------
    -- Configure --
    ---------------
 
    procedure Configure
-     (Value   : Sensor_Configuration;
+     (Self    : AK09940A_Sensor;
+      Value   : Sensor_Configuration;
       Success : out Boolean) is
    begin
-      Sensor.Configure (Chip, Value, Success);
+      Sensor.Configure (Self, Value, Success);
    end Configure;
 
    ------------------------
@@ -52,53 +48,57 @@ package body AK09940.SPI is
    ------------------------
 
    procedure Enable_Temperature
-     (Value   : Boolean;
+     (Self    : AK09940A_Sensor;
+      Value   : Boolean;
       Success : out Boolean) is
    begin
-      Sensor.Enable_Temperature (Chip, Value, Success);
+      Sensor.Enable_Temperature (Self, Value, Success);
    end Enable_Temperature;
 
    ----------------
    -- Initialize --
    ----------------
 
-   procedure Initialize (Success : out Boolean) is
+   procedure Initialize
+     (Self    : AK09940A_Sensor'Class;
+      Success : out Boolean) is
    begin
-      Sensor.Disable_I2C (Chip, Success);
+      Sensor.Disable_I2C (Self, Success);
    end Initialize;
 
    -------------------
    -- Is_Data_Ready --
    -------------------
 
-   function Is_Data_Ready return Boolean is (Sensor.Is_Data_Ready (Chip));
+   function Is_Data_Ready (Self : AK09940A_Sensor) return Boolean is
+      (Sensor.Is_Data_Ready (Self));
 
    ----------
    -- Read --
    ----------
 
    procedure Read
-     (Ignore  : Chip_Settings;
+     (Self    : AK09940A_Sensor'Class;
       Data    : out Byte_Array;
       Success : out Boolean)
    is
       use type HAL.UInt8;
       use all type HAL.SPI.SPI_Status;
 
-      Addr : constant HAL.UInt8 := HAL.UInt8 (Data'First) or 16#80#;
+      Addr   : constant HAL.UInt8 := HAL.UInt8 (Data'First) or 16#80#;
       Status : HAL.SPI.SPI_Status;
       Output : HAL.SPI.SPI_Data_8b (Data'Range);
    begin
-      SPI.SPI_CS.Clear;
+      Self.SPI_CS.Clear;
 
-      SPI_Port.Transmit (HAL.SPI.SPI_Data_8b'(1 => Addr), Status);
+      Self.SPI_Port.Transmit (HAL.SPI.SPI_Data_8b'(1 => Addr), Status);
 
       if Status = Ok then
-         SPI_Port.Receive (Output, Status);
+         Self.SPI_Port.Receive (Output, Status);
          Data := [for J of Output => Interfaces.Unsigned_8 (J)];
       end if;
 
-      SPI.SPI_CS.Set;
+      Self.SPI_CS.Set;
 
       Success := Status = Ok;
    end Read;
@@ -108,10 +108,11 @@ package body AK09940.SPI is
    ----------------------
 
    procedure Read_Measurement
-     (Value   : out Magnetic_Field_Vector;
+     (Self    : AK09940A_Sensor;
+      Value   : out Magnetic_Field_Vector;
       Success : out Boolean) is
    begin
-      Sensor.Read_Measurement (Chip, Value, Success);
+      Sensor.Read_Measurement (Self, Value, Success);
    end Read_Measurement;
 
    --------------------------
@@ -119,19 +120,22 @@ package body AK09940.SPI is
    --------------------------
 
    procedure Read_Raw_Measurement
-     (Value   : out Raw_Vector;
+     (Self    : AK09940A_Sensor;
+      Value   : out Raw_Vector;
       Success : out Boolean) is
    begin
-      Sensor.Read_Raw_Measurement (Chip, Value, Success);
+      Sensor.Read_Raw_Measurement (Self, Value, Success);
    end Read_Raw_Measurement;
 
    -----------
    -- Reset --
    -----------
 
-   procedure Reset (Success : out Boolean) is
+   procedure Reset
+     (Self    : AK09940A_Sensor;
+      Success : out Boolean) is
    begin
-      Sensor.Reset (Chip, Success);
+      Sensor.Reset (Self, Success);
    end Reset;
 
    -------------------------
@@ -139,10 +143,11 @@ package body AK09940.SPI is
    -------------------------
 
    procedure Set_FIFO_Water_Mark
-     (Value   : Watermark_Level;
+     (Self    : AK09940A_Sensor;
+      Value   : Watermark_Level;
       Success : out Boolean) is
    begin
-      Sensor.Set_FIFO_Water_Mark (Chip, Value, Success);
+      Sensor.Set_FIFO_Water_Mark (Self, Value, Success);
    end Set_FIFO_Water_Mark;
 
    -----------
@@ -150,7 +155,7 @@ package body AK09940.SPI is
    -----------
 
    procedure Write
-     (Ignore  : Chip_Settings;
+     (Self    : AK09940A_Sensor'Class;
       Address : Register_Address;
       Data    : Interfaces.Unsigned_8;
       Success : out Boolean)
@@ -160,15 +165,15 @@ package body AK09940.SPI is
       Addr : constant HAL.UInt8 := HAL.UInt8 (Address);
       Status : HAL.SPI.SPI_Status;
    begin
-      SPI.SPI_CS.Clear;
+      Self.SPI_CS.Clear;
 
-      SPI_Port.Transmit
+      Self.SPI_Port.Transmit
         (HAL.SPI.SPI_Data_8b'[Addr, HAL.UInt8 (Data)],
          Status);
 
-      SPI.SPI_CS.Set;
+      Self.SPI_CS.Set;
 
       Success := Status = Ok;
    end Write;
 
-end AK09940.SPI;
+end AK09940A.SPI_Sensors;

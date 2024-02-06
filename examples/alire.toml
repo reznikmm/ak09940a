@@ -2,16 +2,16 @@
 #
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-name = "ak09940_examples"
-description = "Examples for AK09940 sensor"
+name = "ak09940a_examples"
+description = "Examples for AK09940A sensor"
 version = "1.0.0"
 
 authors = ["Max Reznik"]
 maintainers = ["Max Reznik <reznikmm@gmail.com>"]
 maintainers-logins = ["reznikmm"]
 licenses = "Apache-2.0 WITH LLVM-exception"
-website = "https://github.com/reznikmm/ak09940"
-project-files = ["ak09940_put/ak09940_put.gpr", "ak09940_lcd/ak09940_lcd.gpr"]
+website = "https://github.com/reznikmm/ak09940a"
+project-files = ["ak09940a_put/ak09940a_put.gpr", "ak09940a_lcd/ak09940a_lcd.gpr"]
 
 [configuration]
 generate_ada = false
@@ -20,9 +20,9 @@ generate_gpr = false
 
 [[depends-on]]
 gnat_arm_elf = "^12.2"
-ak09940 = "*"
+ak09940a = "*"
 stm32_f4ve_full = "*"
 
 [[pins]]
-ak09940 = { path='..' }
+ak09940a = { path='..' }
 stm32_f4ve_full = { path='../adl/boards/stm32_f4ve' }

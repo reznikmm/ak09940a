@@ -1,14 +1,14 @@
-name = "ak09940"
-description = "Driver for AK09940 magnetic sensor"
+name = "ak09940a"
+description = "Driver for AK09940A magnetic sensor"
 version = "1.0.0"
 
 authors = ["Max Reznik"]
 maintainers = ["Max Reznik <reznikmm@gmail.com>"]
 maintainers-logins = ["reznikmm"]
 licenses = "Apache-2.0 WITH LLVM-exception"
-website = "https://github.com/reznikmm/ak09940"
+website = "https://github.com/reznikmm/ak09940a"
 tags = ["sensor", "magnetometer", "driver"]
-project-files = ["gnat/ak09940.gpr"]
+project-files = ["gnat/ak09940a.gpr"]
 
 [configuration]
 output_dir = "gnat"

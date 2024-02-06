@@ -21,46 +21,46 @@ with Display_ILI9341;
 with Bitmapped_Drawing;
 with BMP_Fonts;
 
-with AK09940.I2C_Sensors;
+with AK09940A.I2C_Sensors;
 
 with GUI;
 
 procedure Main is
    use all type GUI.Button_Kind;
 
-   Sensor : AK09940.I2C_Sensors.AK09940_Sensor
+   Sensor : AK09940A.I2C_Sensors.AK09940A_Sensor
      (I2C_Port    => STM32.Device.I2C_1'Access,
       I2C_Address => 16#0C#);
 
    procedure Configure_Sensor;
    --  Restart sensor with new settings according to GUI state
 
-   subtype Sensor_Data is AK09940.Magnetic_Field_Vector;
+   subtype Sensor_Data is AK09940A.Magnetic_Field_Vector;
 
-   function Read_Sensor return AK09940.Magnetic_Field_Vector;
+   function Read_Sensor return AK09940A.Magnetic_Field_Vector;
 
    function Min (Left, Right : Sensor_Data)
      return Sensor_Data is
-       (X => AK09940.Magnetic_Field'Min (Left.X, Right.X),
-        Y => AK09940.Magnetic_Field'Min (Left.Y, Right.Y),
-        Z => AK09940.Magnetic_Field'Min (Left.Z, Right.Z));
+       (X => AK09940A.Magnetic_Field'Min (Left.X, Right.X),
+        Y => AK09940A.Magnetic_Field'Min (Left.Y, Right.Y),
+        Z => AK09940A.Magnetic_Field'Min (Left.Z, Right.Z));
 
    function Max (Left, Right : Sensor_Data)
      return Sensor_Data is
-       (X => AK09940.Magnetic_Field'Max (Left.X, Right.X),
-        Y => AK09940.Magnetic_Field'Max (Left.Y, Right.Y),
-        Z => AK09940.Magnetic_Field'Max (Left.Z, Right.Z));
+       (X => AK09940A.Magnetic_Field'Max (Left.X, Right.X),
+        Y => AK09940A.Magnetic_Field'Max (Left.Y, Right.Y),
+        Z => AK09940A.Magnetic_Field'Max (Left.Z, Right.Z));
 
-   use type AK09940.Magnetic_Field;
+   use type AK09940A.Magnetic_Field;
 
    function "*" (Percent : Integer; Right : Sensor_Data)
      return Sensor_Data is
-       (X => AK09940.Magnetic_Field'Max
-          (abs Right.X / 100, AK09940.Magnetic_Field'Small) * Percent,
-        Y => AK09940.Magnetic_Field'Max
-          (abs Right.Y / 100, AK09940.Magnetic_Field'Small) * Percent,
-        Z => AK09940.Magnetic_Field'Max
-          (abs Right.Z / 100, AK09940.Magnetic_Field'Small) * Percent);
+       (X => AK09940A.Magnetic_Field'Max
+          (abs Right.X / 100, AK09940A.Magnetic_Field'Small) * Percent,
+        Y => AK09940A.Magnetic_Field'Max
+          (abs Right.Y / 100, AK09940A.Magnetic_Field'Small) * Percent,
+        Z => AK09940A.Magnetic_Field'Max
+          (abs Right.Z / 100, AK09940A.Magnetic_Field'Small) * Percent);
 
    function "+" (Left, Right : Sensor_Data)
      return Sensor_Data is
@@ -78,7 +78,7 @@ procedure Main is
 
    procedure Print
      (LCD    : not null HAL.Bitmap.Any_Bitmap_Buffer;
-      Data   : AK09940.Magnetic_Field_Vector);
+      Data   : AK09940A.Magnetic_Field_Vector);
 
    procedure Plot
      (LCD    : not null HAL.Bitmap.Any_Bitmap_Buffer;
@@ -91,17 +91,17 @@ procedure Main is
    ----------------------
 
    procedure Configure_Sensor is
-      --  use type AK09940.Over_Sample_Rate;
+      --  use type AK09940A.Over_Sample_Rate;
       Ok   : Boolean;
-      Freq : AK09940.Measurement_Frequency := 10;
-      Drv  : AK09940.Sensor_Drive := AK09940.Sensor_Drive'First;
+      Freq : AK09940A.Measurement_Frequency := 10;
+      Drv  : AK09940A.Sensor_Drive := AK09940A.Sensor_Drive'First;
 
-      Map  : constant array (F10 .. F400) of AK09940.Measurement_Frequency :=
+      Map  : constant array (F10 .. F400) of AK09940A.Measurement_Frequency :=
         (10, 20, 50, 100, 200, 400);
    begin
       for V of GUI.State (+P1 .. +N2) loop
          exit when V;
-         Drv := AK09940.Sensor_Drive'Succ (Drv);
+         Drv := AK09940A.Sensor_Drive'Succ (Drv);
       end loop;
 
       for F in F10 .. F400 loop
@@ -112,7 +112,7 @@ procedure Main is
       end loop;
 
       Sensor.Configure
-        ((Mode      => AK09940.Continuous_Measurement,
+        ((Mode      => AK09940A.Continuous_Measurement,
           Drive     => Drv,
           Frequency => Freq,
           Use_FIFO  => False),
@@ -138,9 +138,9 @@ procedure Main is
      (LCD  : not null HAL.Bitmap.Any_Bitmap_Buffer;
       Data : Sensor_Data)
    is
-      TX : constant String := AK09940.Magnetic_Field'Image (Data.X);
-      TY : constant String := AK09940.Magnetic_Field'Image (Data.Y);
-      TZ : constant String := AK09940.Magnetic_Field'Image (Data.Z);
+      TX : constant String := AK09940A.Magnetic_Field'Image (Data.X);
+      TY : constant String := AK09940A.Magnetic_Field'Image (Data.Y);
+      TZ : constant String := AK09940A.Magnetic_Field'Image (Data.Z);
    begin
       if GUI.State (+Fx) then
          Bitmapped_Drawing.Draw_String
@@ -185,7 +185,7 @@ procedure Main is
    is
       type Int is delta 1.0 range -1000.0 .. 1000.0;
       Height : constant Int := Int (LCD.Height);
-      Value  : AK09940.Magnetic_Field;
+      Value  : AK09940A.Magnetic_Field;
       Y      : Natural;
    begin
       Data := Min (Data, Limits.Max);
@@ -217,9 +217,9 @@ procedure Main is
    -- Read_Sensor --
    -----------------
 
-   function Read_Sensor return AK09940.Magnetic_Field_Vector is
+   function Read_Sensor return AK09940A.Magnetic_Field_Vector is
       Ok     : Boolean;
-      Result : AK09940.Magnetic_Field_Vector;
+      Result : AK09940A.Magnetic_Field_Vector;
    begin
       while not Sensor.Is_Data_Ready loop
          Ravenscar_Time.Delays.Delay_Microseconds (50);
@@ -261,13 +261,13 @@ begin
       --  Workaround for STM32 I2C driver bug
       STM32.Device.I2C_1.Master_Transmit
         (Addr    => 16#18#,  --  0C * 2
-         Data    => (1 => 16#00#),  --  Chip ID for AK09940
+         Data    => (1 => 16#00#),  --  Chip ID for AK09940A
          Status  => Status);
    end;
 
-   --  Look for AK09940 chip
-   if not Sensor.Check_Chip_Id (AK09940.AK09940A_Chip_Id) then
-      Ada.Text_IO.Put_Line ("AK09940 not found.");
+   --  Look for AK09940A chip
+   if not Sensor.Check_Chip_Id (AK09940A.AK09940AA_Chip_Id) then
+      Ada.Text_IO.Put_Line ("AK09940A not found.");
       raise Program_Error;
    end if;
 
@@ -287,7 +287,7 @@ begin
 
    loop
       declare
-         Data   : AK09940.Magnetic_Field_Vector;
+         Data   : AK09940A.Magnetic_Field_Vector;
          Update : Boolean := False;  --  GUI state updated
       begin
          GUI.Draw (LCD.all, Clear => True);  --  draw all buttons

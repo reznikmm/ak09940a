@@ -1,10 +1,10 @@
-# AK09940
+# AK09940A
 
-[![Build status](https://github.com/reznikmm/ak09940/actions/workflows/alire.yml/badge.svg)](https://github.com/reznikmm/ak09940/actions/workflows/alire.yml)
-[![Alire](https://img.shields.io/endpoint?url=https://alire.ada.dev/badges/ak09940.json)](https://alire.ada.dev/crates/ak09940.html)
-[![REUSE status](https://api.reuse.software/badge/github.com/reznikmm/ak09940)](https://api.reuse.software/info/github.com/reznikmm/ak09940)
+[![Build status](https://github.com/reznikmm/ak09940a/actions/workflows/alire.yml/badge.svg)](https://github.com/reznikmm/ak09940a/actions/workflows/alire.yml)
+[![Alire](https://img.shields.io/endpoint?url=https://alire.ada.dev/badges/ak09940a.json)](https://alire.ada.dev/crates/ak09940a.html)
+[![REUSE status](https://api.reuse.software/badge/github.com/reznikmm/ak09940a)](https://api.reuse.software/info/github.com/reznikmm/ak09940a)
 
-> Driver for AK09940 magnetic sensor.
+> Driver for AK09940A magnetic sensor.
 
 - [Official website](https://www.akm.com/eu/en/products/tri-axis-magnetic-sensor/lineup-tri-axis-magnetic-sensor/ak09940a/)
 
@@ -19,7 +19,7 @@ Key Features
 - The external trigger input function and the serial interface specifications
   are convenient for synchronous measurement of multiple sensors.
 
-The AK09940 driver enables the following functionalities:
+The AK09940A driver enables the following functionalities:
 
 - Detect the presence of the sensor.
 - Perform soft reset
@@ -28,9 +28,9 @@ The AK09940 driver enables the following functionalities:
 
 ## Install
 
-Add `ak09940` as a dependency to your crate with Alire:
+Add `ak09940a` as a dependency to your crate with Alire:
 
-    alr with ak09940
+    alr with ak09940a
 
 ## Usage
 
@@ -42,12 +42,12 @@ Generic instantiation looks like this:
 
 ```ada
 declare
-   package AK09940_I2C is new HCM5883.I2C
+   package AK09940A_I2C is new HCM5883.I2C
      (I2C_Port    => STM32.Device.I2C_1'Access,
       I2C_Address => 16#0C#);
 
 begin
-   if AK09940_I2C.Check_Chip_Id then
+   if AK09940A_I2C.Check_Chip_Id then
       ...
 ```
 
@@ -55,7 +55,7 @@ While declaring object of the tagged type looks like this:
 
 ```ada
 declare
-   Sensor : AK09940.I2C_Sensors.AK09940_Sensor
+   Sensor : AK09940A.I2C_Sensors.AK09940A_Sensor
      (I2C_Port    => STM32.Device.I2C_1'Access,
       I2C_Address => 16#0C#);
 begin
@@ -86,8 +86,8 @@ Settings include:
 An example:
 ```ada
 Sensor.Configure
-  ((Mode      => AK09940.Continuous_Measurement,
-    Drive     => AK09940.Low_Noise_Drive_1,
+  ((Mode      => AK09940A.Continuous_Measurement,
+    Drive     => AK09940A.Low_Noise_Drive_1,
     Frequency => 50,  --  50 Hz
     Use_FIFO  => False),
    Ok);
@@ -118,7 +118,7 @@ to build:
 
 Launch GNAT Studio with Alire:
 
-    cd examples; alr exec gnatstudio -- -P ak09940_put/ak09940_put.gpr
+    cd examples; alr exec gnatstudio -- -P ak09940a_put/ak09940a_put.gpr
 
 ### VS Code
 
@@ -127,7 +127,7 @@ Open the `examples` folder in VS Code. Use pre-configured tasks to build
 projects and flash (openocd or st-util). Install Cortex Debug extension
 to launch pre-configured debugger targets.
 
-- [Simple example for STM32 F4VE board](examples/ak09940_put) - complete
+- [Simple example for STM32 F4VE board](examples/ak09940a_put) - complete
   example for the generic instantiation.
-- [Advanced example for STM32 F4VE board and LCD & touch panel](examples/ak09940_lcd) -
+- [Advanced example for STM32 F4VE board and LCD & touch panel](examples/ak09940a_lcd) -
   complete example of the tagged type usage.

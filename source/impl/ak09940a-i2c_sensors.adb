@@ -5,30 +5,30 @@
 
 pragma Ada_2022;
 
-with AK09940.Internal;
+with AK09940A.Internal;
 
-package body AK09940.SPI_Sensors is
+package body AK09940A.I2C_Sensors is
 
    procedure Read
-     (Self    : AK09940_Sensor'Class;
+     (Self    : AK09940A_Sensor'Class;
       Data    : out Byte_Array;
       Success : out Boolean);
 
    procedure Write
-     (Self    : AK09940_Sensor'Class;
+     (Self    : AK09940A_Sensor'Class;
       Address : Register_Address;
       Data    : Interfaces.Unsigned_8;
       Success : out Boolean);
 
-   package Sensor is new Internal (AK09940_Sensor'Class, Read, Write);
+   package Sensor is new Internal (AK09940A_Sensor'Class, Read, Write);
 
    -------------------
    -- Check_Chip_Id --
    -------------------
 
    function Check_Chip_Id
-     (Self : AK09940_Sensor;
-      Expect : Interfaces.Unsigned_8 := AK09940_Chip_Id) return Boolean is
+     (Self   : AK09940A_Sensor;
+      Expect : Interfaces.Unsigned_8 := AK09940A_Chip_Id) return Boolean is
         (Sensor.Check_Chip_Id (Self, Expect));
 
    ---------------
@@ -36,7 +36,7 @@ package body AK09940.SPI_Sensors is
    ---------------
 
    procedure Configure
-     (Self    : AK09940_Sensor;
+     (Self    : AK09940A_Sensor;
       Value   : Sensor_Configuration;
       Success : out Boolean) is
    begin
@@ -48,29 +48,18 @@ package body AK09940.SPI_Sensors is
    ------------------------
 
    procedure Enable_Temperature
-     (Self    : AK09940_Sensor;
+     (Self    : AK09940A_Sensor;
       Value   : Boolean;
       Success : out Boolean) is
    begin
       Sensor.Enable_Temperature (Self, Value, Success);
    end Enable_Temperature;
 
-   ----------------
-   -- Initialize --
-   ----------------
-
-   procedure Initialize
-     (Self    : AK09940_Sensor'Class;
-      Success : out Boolean) is
-   begin
-      Sensor.Disable_I2C (Self, Success);
-   end Initialize;
-
    -------------------
    -- Is_Data_Ready --
    -------------------
 
-   function Is_Data_Ready (Self : AK09940_Sensor) return Boolean is
+   function Is_Data_Ready (Self : AK09940A_Sensor) return Boolean is
       (Sensor.Is_Data_Ready (Self));
 
    ----------
@@ -78,29 +67,26 @@ package body AK09940.SPI_Sensors is
    ----------
 
    procedure Read
-     (Self    : AK09940_Sensor'Class;
+     (Self    : AK09940A_Sensor'Class;
       Data    : out Byte_Array;
       Success : out Boolean)
    is
-      use type HAL.UInt8;
-      use all type HAL.SPI.SPI_Status;
+      use type HAL.I2C.I2C_Status;
+      use type HAL.UInt10;
 
-      Addr   : constant HAL.UInt8 := HAL.UInt8 (Data'First) or 16#80#;
-      Status : HAL.SPI.SPI_Status;
-      Output : HAL.SPI.SPI_Data_8b (Data'Range);
+      Status : HAL.I2C.I2C_Status;
+      Output : HAL.I2C.I2C_Data (Data'Range);
    begin
-      Self.SPI_CS.Clear;
+      Self.I2C_Port.Mem_Read
+        (Addr          => 2 * HAL.UInt10 (Self.I2C_Address),
+         Mem_Addr      => HAL.UInt16 (Data'First),
+         Mem_Addr_Size => HAL.I2C.Memory_Size_8b,
+         Data          => Output,
+         Status        => Status);
 
-      Self.SPI_Port.Transmit (HAL.SPI.SPI_Data_8b'(1 => Addr), Status);
+      Data := [for J of Output => Interfaces.Unsigned_8 (J)];
 
-      if Status = Ok then
-         Self.SPI_Port.Receive (Output, Status);
-         Data := [for J of Output => Interfaces.Unsigned_8 (J)];
-      end if;
-
-      Self.SPI_CS.Set;
-
-      Success := Status = Ok;
+      Success := Status = HAL.I2C.Ok;
    end Read;
 
    ----------------------
@@ -108,7 +94,7 @@ package body AK09940.SPI_Sensors is
    ----------------------
 
    procedure Read_Measurement
-     (Self    : AK09940_Sensor;
+     (Self    : AK09940A_Sensor;
       Value   : out Magnetic_Field_Vector;
       Success : out Boolean) is
    begin
@@ -120,7 +106,7 @@ package body AK09940.SPI_Sensors is
    --------------------------
 
    procedure Read_Raw_Measurement
-     (Self    : AK09940_Sensor;
+     (Self    : AK09940A_Sensor;
       Value   : out Raw_Vector;
       Success : out Boolean) is
    begin
@@ -132,7 +118,7 @@ package body AK09940.SPI_Sensors is
    -----------
 
    procedure Reset
-     (Self    : AK09940_Sensor;
+     (Self    : AK09940A_Sensor;
       Success : out Boolean) is
    begin
       Sensor.Reset (Self, Success);
@@ -143,7 +129,7 @@ package body AK09940.SPI_Sensors is
    -------------------------
 
    procedure Set_FIFO_Water_Mark
-     (Self    : AK09940_Sensor;
+     (Self    : AK09940A_Sensor;
       Value   : Watermark_Level;
       Success : out Boolean) is
    begin
@@ -155,25 +141,24 @@ package body AK09940.SPI_Sensors is
    -----------
 
    procedure Write
-     (Self    : AK09940_Sensor'Class;
+     (Self    : AK09940A_Sensor'Class;
       Address : Register_Address;
       Data    : Interfaces.Unsigned_8;
       Success : out Boolean)
    is
-      use all type HAL.SPI.SPI_Status;
+      use type HAL.I2C.I2C_Status;
+      use type HAL.UInt10;
 
-      Addr : constant HAL.UInt8 := HAL.UInt8 (Address);
-      Status : HAL.SPI.SPI_Status;
+      Status : HAL.I2C.I2C_Status;
    begin
-      Self.SPI_CS.Clear;
+      Self.I2C_Port.Mem_Write
+        (Addr          => 2 * HAL.UInt10 (Self.I2C_Address),
+         Mem_Addr      => HAL.UInt16 (Address),
+         Mem_Addr_Size => HAL.I2C.Memory_Size_8b,
+         Data          => [HAL.UInt8 (Data)],
+         Status        => Status);
 
-      Self.SPI_Port.Transmit
-        (HAL.SPI.SPI_Data_8b'[Addr, HAL.UInt8 (Data)],
-         Status);
-
-      Self.SPI_CS.Set;
-
-      Success := Status = Ok;
+      Success := Status = HAL.I2C.Ok;
    end Write;
 
-end AK09940.SPI_Sensors;
+end AK09940A.I2C_Sensors;

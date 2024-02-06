@@ -16,17 +16,17 @@ with STM32.Setup;
 
 with HAL.I2C;
 
-with AK09940.I2C;
+with AK09940A.I2C;
 
 procedure Main is
    use type Ada.Real_Time.Time;
 
-   package AK09940_I2C is new AK09940.I2C
+   package AK09940A_I2C is new AK09940A.I2C
      (I2C_Port    => STM32.Device.I2C_1'Access,
       I2C_Address => 16#0C#);
 
    Ok     : Boolean := False;
-   Vector : array (1 .. 16) of AK09940.Magnetic_Field_Vector;
+   Vector : array (1 .. 16) of AK09940A.Magnetic_Field_Vector;
    Prev   : Ada.Real_Time.Time;
    Spin   : Natural;
 begin
@@ -45,24 +45,24 @@ begin
       --  Workaround for STM32 I2C driver bug
       STM32.Device.I2C_1.Master_Transmit
         (Addr    => 16#18#,  --  0C * 2
-         Data    => [16#00#],  --  Chip ID for AK09940
+         Data    => [16#00#],  --  Chip ID for AK09940A
          Status  => Status);
    end;
 
-   --  Look for AK09940 chip
-   if not AK09940_I2C.Check_Chip_Id (AK09940.AK09940A_Chip_Id) then
-      Ada.Text_IO.Put_Line ("AK09940 not found.");
+   --  Look for AK09940A chip
+   if not AK09940A_I2C.Check_Chip_Id (AK09940A.AK09940AA_Chip_Id) then
+      Ada.Text_IO.Put_Line ("AK09940A not found.");
       raise Program_Error;
    end if;
 
-   --  Reset AK09940
-   AK09940_I2C.Reset (Ok);
+   --  Reset AK09940A
+   AK09940A_I2C.Reset (Ok);
    pragma Assert (Ok);
 
-   --  Set AK09940 up
-   AK09940_I2C.Configure
-     ((Mode      => AK09940.Continuous_Measurement,
-       Drive     => AK09940.Low_Noise_Drive_1,
+   --  Set AK09940A up
+   AK09940A_I2C.Configure
+     ((Mode      => AK09940A.Continuous_Measurement,
+       Drive     => AK09940A.Low_Noise_Drive_1,
        Use_FIFO  => False,
        Frequency => 20),
       Ok);
@@ -75,12 +75,12 @@ begin
 
       for J in Vector'Range loop
 
-         while not AK09940_I2C.Is_Data_Ready loop
+         while not AK09940A_I2C.Is_Data_Ready loop
             Spin   := Spin + 1;
          end loop;
 
          --  Read scaled values from the sensor
-         AK09940_I2C.Read_Measurement (Vector (J), Ok);
+         AK09940A_I2C.Read_Measurement (Vector (J), Ok);
          pragma Assert (Ok);
       end loop;
 
