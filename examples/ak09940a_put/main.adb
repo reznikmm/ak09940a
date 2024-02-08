@@ -50,7 +50,7 @@ begin
    end;
 
    --  Look for AK09940A chip
-   if not AK09940A_I2C.Check_Chip_Id (AK09940A.AK09940AA_Chip_Id) then
+   if not AK09940A_I2C.Check_Chip_Id then
       Ada.Text_IO.Put_Line ("AK09940A not found.");
       raise Program_Error;
    end if;
@@ -63,8 +63,8 @@ begin
    AK09940A_I2C.Configure
      ((Mode      => AK09940A.Continuous_Measurement,
        Drive     => AK09940A.Low_Noise_Drive_1,
-       Use_FIFO  => False,
-       Frequency => 20),
+       Frequency => 20,
+       others    => <>),
       Ok);
    pragma Assert (Ok);
 

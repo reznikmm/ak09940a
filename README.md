@@ -42,7 +42,7 @@ Generic instantiation looks like this:
 
 ```ada
 declare
-   package AK09940A_I2C is new HCM5883.I2C
+   package AK09940A_I2C is new AK09940A.I2C
      (I2C_Port    => STM32.Device.I2C_1'Access,
       I2C_Address => 16#0C#);
 
@@ -74,12 +74,12 @@ Settings include:
   - `Power_Down`
   - `Single_Measurement`
   - `Continuous_Measurement`
+  - `External_Trigger`
   - `Self_Test`
-
-- `Drive`: Select low power drive or low noise drive
-
+- `Drive`: Select low power drive or (ultra-)low noise drive
 - `Use_FIFO`: Enable or disable FIFO
-
+- `Watermark`: FIFO watermark
+- `Trigger_Pin`: Turn DRDY pin to TRG pin.
 - `Frequency`: Set sampling frequency (for Continuous mode only)
 
 
@@ -89,7 +89,7 @@ Sensor.Configure
   ((Mode      => AK09940A.Continuous_Measurement,
     Drive     => AK09940A.Low_Noise_Drive_1,
     Frequency => 50,  --  50 Hz
-    Use_FIFO  => False),
+    others    => <>),
    Ok);
 ```
 

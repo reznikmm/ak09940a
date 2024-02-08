@@ -3,6 +3,8 @@
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 ----------------------------------------------------------------
 
+pragma Ada_2022;
+
 with Ada.Text_IO;
 
 package body GUI is
@@ -99,12 +101,41 @@ package body GUI is
       Update : in out Boolean) is
    begin
       case Button is
-         when P1 .. N2 =>
-            State (+P1 .. +N2) := (others => False);
+         when F400 =>
+            if State (+UL .. +P2) = [False, False, False] then
+               return;
+            end if;
+         when F1000 =>
+            if State (+UL .. +P1) = [False, False] then
+               return;
+            end if;
+         when F2500 =>
+            if State (+UL) = False then
+               return;
+            end if;
+         when N1 .. N2 =>
+            if State (+F400 .. +F2500) /= [False, False, False] then
+               return;
+            end if;
+         when P2 =>
+            if State (+F1000 .. +F2500) /= [False, False] then
+               return;
+            end if;
+         when P1 =>
+            if State (+F2500) then
+               return;
+            end if;
+         when others =>
+            null;
+      end case;
+
+      case Button is
+         when UL .. N2 =>
+            State (+UL .. +N2) := [others => False];
             State (+Button) := True;
             Update := True;
-         when F10 .. F400 =>
-            State (+F10 .. +F400) := (others => False);
+         when SM .. F2500 =>
+            State (+SM .. +F2500) := [others => False];
             State (+Button) := True;
             Update := True;
          when Fx .. Fz =>

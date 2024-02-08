@@ -14,9 +14,11 @@ board and a compatible LCD display. It provides a GUI interface to configure
 sensor parameters such as measurement frequency and Drive.
 The display includes buttons for enabling/disabling the display of
 measurement (`Fx`, `Fy`, `Fz`). Additionally, there are yellow buttons
-(`P1`, `P2`, `N1`, `N2`) for selecting drive (low power 1/2, low noise 1/2).
-Grey buttons (`10`, `20`, `50`, `1H`, `2H`, `4H`) control the measurement
-frequency (from 10 HZ to 400 Hz).
+(`UL`, `P1`, `P2`, `N1`, `N2`) for selecting drive (ultra-low power, low power
+1 or 2, low noise 1 or 2). Green buttons `SM` and `ST` set the operation mode
+to single measurement or self test. Grey buttons (`10`, `20`, `50`, `1H`, `2H`,
+`4H`, `1T`, `2T`) set the continuous measurement mode and control the
+measurement frequency (from 10 HZ to 2500 Hz).
 
 ## Requirements
 

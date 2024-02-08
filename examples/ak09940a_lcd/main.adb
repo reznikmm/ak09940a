@@ -86,37 +86,65 @@ procedure Main is
       Data   : in out Sensor_Data;
       Limits : Sensor_Limits);
 
+   Drive : AK09940A.Sensor_Drive := AK09940A.Ultra_Low_Power_Drive;
+
    ----------------------
    -- Configure_Sensor --
    ----------------------
 
    procedure Configure_Sensor is
-      --  use type AK09940A.Over_Sample_Rate;
+      use type AK09940A.Sensor_Drive;
       Ok   : Boolean;
       Freq : AK09940A.Measurement_Frequency := 10;
       Drv  : AK09940A.Sensor_Drive := AK09940A.Sensor_Drive'First;
-
-      Map  : constant array (F10 .. F400) of AK09940A.Measurement_Frequency :=
-        (10, 20, 50, 100, 200, 400);
+      Map  : constant array (F10 .. F2500) of AK09940A.Measurement_Frequency
+        := (10, 20, 50, 100, 200, 400, 1000, 2500);
    begin
-      for V of GUI.State (+P1 .. +N2) loop
+      for V of GUI.State (+UL .. +N2) loop
          exit when V;
          Drv := AK09940A.Sensor_Drive'Succ (Drv);
       end loop;
 
-      for F in F10 .. F400 loop
+      for F in Map'Range loop
          if GUI.State (+F) then
             Freq := Map (F);
             exit;
          end if;
       end loop;
 
-      Sensor.Configure
-        ((Mode      => AK09940A.Continuous_Measurement,
-          Drive     => Drv,
-          Frequency => Freq,
-          Use_FIFO  => False),
-         Ok);
+      if Drive /= Drv then
+         Drive := Drv;
+         Sensor.Configure
+           ((Mode      => AK09940A.Power_Down,
+             Drive     => Drive,
+             others    => <>),
+            Ok);
+         pragma Assert (Ok);
+
+         Ravenscar_Time.Delays.Delay_Microseconds (100);
+      end if;
+
+      if GUI.State (+SM) then
+         Sensor.Configure
+           ((Mode      => AK09940A.Single_Measurement,
+             Drive     => Drive,
+             others    => <>),
+            Ok);
+      elsif GUI.State (+ST) then
+         Sensor.Configure
+           ((Mode      => AK09940A.Self_Test,
+             Drive     => Drive,
+             others    => <>),
+            Ok);
+      else
+         Sensor.Configure
+           ((Mode      => AK09940A.Continuous_Measurement,
+             Drive     => Drive,
+             Frequency => Freq,
+             others    => <>),
+            Ok);
+      end if;
+
       pragma Assert (Ok);
    end Configure_Sensor;
 
@@ -221,12 +249,28 @@ procedure Main is
       Ok     : Boolean;
       Result : AK09940A.Magnetic_Field_Vector;
    begin
-      while not Sensor.Is_Data_Ready loop
-         Ravenscar_Time.Delays.Delay_Microseconds (50);
+      for J in 1 .. 2_000 loop
+         exit when Sensor.Is_Data_Ready;
       end loop;
 
       Sensor.Read_Measurement (Result, Ok);
       pragma Assert (Ok);
+
+      if GUI.State (+SM) then
+         --  Restart Single_Measurement
+         Sensor.Configure
+           ((Mode      => AK09940A.Single_Measurement,
+             Drive     => Drive,
+             others    => <>),
+            Ok);
+      elsif GUI.State (+ST) then
+         --  Restart Self_Test
+         Sensor.Configure
+           ((Mode      => AK09940A.Self_Test,
+             Drive     => Drive,
+             others    => <>),
+            Ok);
+      end if;
 
       return Result;
    end Read_Sensor;
@@ -266,7 +310,7 @@ begin
    end;
 
    --  Look for AK09940A chip
-   if not Sensor.Check_Chip_Id (AK09940A.AK09940AA_Chip_Id) then
+   if not Sensor.Check_Chip_Id then
       Ada.Text_IO.Put_Line ("AK09940A not found.");
       raise Program_Error;
    end if;
@@ -312,6 +356,7 @@ begin
 
             if Update then
                Configure_Sensor;
+               Update := False;
             elsif STM32.User_Button.Has_Been_Pressed then
                GUI.Dump_Screen (LCD.all);
             end if;

@@ -32,9 +32,8 @@ package body AK09940A.SPI is
    -- Check_Chip_Id --
    -------------------
 
-   function Check_Chip_Id
-     (Expect : Interfaces.Unsigned_8 := AK09940A_Chip_Id) return Boolean is
-       (Sensor.Check_Chip_Id (Chip, Expect));
+   function Check_Chip_Id return Boolean is
+     (Sensor.Check_Chip_Id (Chip, AK09940A_Chip_Id));
 
    ---------------
    -- Configure --
@@ -46,17 +45,6 @@ package body AK09940A.SPI is
    begin
       Sensor.Configure (Chip, Value, Success);
    end Configure;
-
-   ------------------------
-   -- Enable_Temperature --
-   ------------------------
-
-   procedure Enable_Temperature
-     (Value   : Boolean;
-      Success : out Boolean) is
-   begin
-      Sensor.Enable_Temperature (Chip, Value, Success);
-   end Enable_Temperature;
 
    ----------------
    -- Initialize --
@@ -133,17 +121,6 @@ package body AK09940A.SPI is
    begin
       Sensor.Reset (Chip, Success);
    end Reset;
-
-   -------------------------
-   -- Set_FIFO_Water_Mark --
-   -------------------------
-
-   procedure Set_FIFO_Water_Mark
-     (Value   : Watermark_Level;
-      Success : out Boolean) is
-   begin
-      Sensor.Set_FIFO_Water_Mark (Chip, Value, Success);
-   end Set_FIFO_Water_Mark;
 
    -----------
    -- Write --

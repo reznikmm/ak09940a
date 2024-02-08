@@ -16,9 +16,7 @@ package AK09940A.I2C_Sensors is
      (I2C_Port    : not null HAL.I2C.Any_I2C_Port;
       I2C_Address : I2C_Address_Range) is tagged limited null record;
 
-   function Check_Chip_Id
-     (Self   : AK09940A_Sensor;
-      Expect : Interfaces.Unsigned_8 := AK09940A_Chip_Id) return Boolean;
+   function Check_Chip_Id (Self   : AK09940A_Sensor) return Boolean;
    --  Read the chip ID and check that it matches the expected value.
 
    procedure Reset
@@ -35,19 +33,6 @@ package AK09940A.I2C_Sensors is
    --  * Measurement frequency
    --  * Sensor drive
    --  * FIFO activation
-
-   procedure Set_FIFO_Water_Mark
-     (Self    : AK09940A_Sensor;
-      Value   : Watermark_Level;
-      Success : out Boolean);
-   --  It is prohibited to change watermark in any other modes than Power_Down
-   --  mode.
-
-   procedure Enable_Temperature
-     (Self    : AK09940A_Sensor;
-      Value   : Boolean;
-      Success : out Boolean);
-   --  Enable temperature measurement (On by default).
 
    function Is_Data_Ready (Self : AK09940A_Sensor) return Boolean;
    --  Return True when data is ready (if FIFO disabled) or the number of

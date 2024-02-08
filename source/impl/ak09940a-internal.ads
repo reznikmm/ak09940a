@@ -45,20 +45,6 @@ package AK09940A.Internal is
       Success : out Boolean);
    --  Write CNTL4 Register (33)
 
-   procedure Set_FIFO_Water_Mark
-     (Device  : Device_Context;
-      Value   : Watermark_Level;
-      Success : out Boolean);
-   --  Write CNTL1 Register (30).
-   --  It is prohibited to change watermark in any other modes than Power-down
-   --  mode.
-
-   procedure Enable_Temperature
-     (Device  : Device_Context;
-      Value   : Boolean;
-      Success : out Boolean);
-   --  Write CNTL2 Register (31).
-
    procedure Disable_I2C
      (Device  : Device_Context;
       Success : out Boolean);

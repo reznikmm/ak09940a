@@ -36,20 +36,39 @@ package body AK09940A.Internal is
    is
       use type Interfaces.Unsigned_8;
 
-      type Control_Register is record
+      type Control_Register_1 is record
+         WM       : Natural range 0 .. 7;
+         Zero     : Natural range 0 .. 0 := 0;
+         DTSET    : Boolean;
+         RSV28    : Boolean := False;
+         MT2      : Boolean;
+      end record;
+
+      for Control_Register_1 use record
+         WM       at 0 range 0 .. 2;
+         Zero     at 0 range 3 .. 4;
+         DTSET    at 0 range 5 .. 5;
+         RSV28    at 0 range 6 .. 6;
+         MT2      at 0 range 7 .. 7;
+      end record;
+
+      function Cast_1 is new Ada.Unchecked_Conversion
+        (Control_Register_1, Interfaces.Unsigned_8);
+
+      type Control_Register_3 is record
          MODE     : Natural range 0 .. 16;
          MT       : Natural range 0 .. 3;
          FIFO     : Boolean;
       end record;
 
-      for Control_Register use record
+      for Control_Register_3 use record
          MODE     at 0 range 0 .. 4;
          MT       at 0 range 5 .. 6;
          FIFO     at 0 range 7 .. 7;
       end record;
 
-      function Cast_Control is new Ada.Unchecked_Conversion
-        (Control_Register, Interfaces.Unsigned_8);
+      function Cast_3 is new Ada.Unchecked_Conversion
+        (Control_Register_3, Interfaces.Unsigned_8);
 
       Mode : constant Natural :=
         (case Value.Mode is
@@ -59,17 +78,32 @@ package body AK09940A.Internal is
               (case Value.Frequency is
                   when 10 => 2,
                   when 20 => 4,
-                  when 50  => 5,
+                  when 50  => 6,
                   when 100 => 8,
                   when 200 => 10,
-                  when 400 => 12),
-            when Self_Test => 16);
+                  when 400 => 12,
+                  when 1000 => 14,
+                  when 2500 => 15),
+            when Self_Test => 16,
+            when External_Trigger => 24);
 
-      MT   : constant Natural := Sensor_Drive'Pos (Value.Drive);
-      Data : constant Interfaces.Unsigned_8 :=
-        Cast_Control ((MODE => Mode, MT => MT, FIFO => Value.Use_FIFO));
+      MT   : constant Natural :=
+        Natural'Max (0, Sensor_Drive'Pos (Value.Drive) - 1);
+
+      WM : constant Natural := Positive (Value.Watermark) - 1;
+      DTSET : constant Boolean := Value.Trigger_Pin;
+      MT2 : constant Boolean := Value.Drive = Ultra_Low_Power_Drive;
+
+      Data_30 : constant Interfaces.Unsigned_8 :=
+        Cast_1 ((WM => WM, DTSET => DTSET, MT2 => MT2, others => <>));
+      Data_32 : constant Interfaces.Unsigned_8 :=
+        Cast_3 ((MODE => Mode, MT => MT, FIFO => Value.Use_FIFO));
    begin
-      Write (Device, 16#32#, Data, Success);
+      Write (Device, 16#30#, Data_30, Success);
+
+      if Success then
+         Write (Device, 16#32#, Data_32, Success);
+      end if;
    end Configure;
 
    -----------------
@@ -83,18 +117,6 @@ package body AK09940A.Internal is
       Write (Device, 16#36#, 2#0001_1011#, Success);
    end Disable_I2C;
 
-   ------------------------
-   -- Enable_Temperature --
-   ------------------------
-
-   procedure Enable_Temperature
-     (Device  : Device_Context;
-      Value   : Boolean;
-      Success : out Boolean) is
-   begin
-      Write (Device, 16#31#, (if Value then 64 else 0), Success);
-   end Enable_Temperature;
-
    -------------------
    -- Is_Data_Ready --
    -------------------
@@ -103,7 +125,7 @@ package body AK09940A.Internal is
       use type Interfaces.Unsigned_8;
 
       Ok   : Boolean;
-      Data : Byte_Array (16#10# .. 16#10#);
+      Data : Byte_Array (16#0F# .. 16#0F#);  --  ST: Status (for Polling)
    begin
       Read (Device, Data, Ok);
 
@@ -182,17 +204,5 @@ package body AK09940A.Internal is
    begin
       Write (Device, 16#33#, 16#01#, Success);
    end Reset;
-
-   -------------------------
-   -- Set_FIFO_Water_Mark --
-   -------------------------
-
-   procedure Set_FIFO_Water_Mark
-     (Device  : Device_Context;
-      Value   : Watermark_Level;
-      Success : out Boolean) is
-   begin
-      Write (Device, 16#30#, Interfaces.Unsigned_8 (Value - 1), Success);
-   end Set_FIFO_Water_Mark;
 
 end AK09940A.Internal;
