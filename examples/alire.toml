@@ -11,7 +11,7 @@ maintainers = ["Max Reznik <reznikmm@gmail.com>"]
 maintainers-logins = ["reznikmm"]
 licenses = "Apache-2.0 WITH LLVM-exception"
 website = "https://github.com/reznikmm/ak09940a"
-project-files = ["ak09940a_put/ak09940a_put.gpr", "ak09940a_lcd/ak09940a_lcd.gpr"]
+project-files = ["ak09940a_put/ak09940a_put.gpr", "ak09940a_lcd/ak09940a_lcd.gpr", "ak09940a_spi/ak09940a_spi.gpr"]
 
 [configuration]
 generate_ada = false

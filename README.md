@@ -129,5 +129,7 @@ to launch pre-configured debugger targets.
 
 - [Simple example for STM32 F4VE board](examples/ak09940a_put) - complete
   example for the generic instantiation.
+- [SPI and IRQ example for STM32 F4VE board](examples/ak09940a_spi) - complete
+  example for the SPI generic instantiation with IRQ handling.
 - [Advanced example for STM32 F4VE board and LCD & touch panel](examples/ak09940a_lcd) -
   complete example of the tagged type usage.

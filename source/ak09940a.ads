@@ -3,6 +3,8 @@
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 ----------------------------------------------------------------
 
+--  Top level package for 3-axis magnetic sensor AK09940A
+
 with Interfaces;
 
 package AK09940A is
