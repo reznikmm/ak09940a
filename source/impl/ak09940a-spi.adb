@@ -83,7 +83,9 @@ package body AK09940A.SPI is
 
       if Status = Ok then
          SPI_Port.Receive (Output, Status);
-         Data := [for J of Output => Interfaces.Unsigned_8 (J)];
+         for J in Data'Range loop
+            Data (J) := Interfaces.Unsigned_8 (Output (J));
+         end loop;
       end if;
 
       SPI.SPI_CS.Set;
