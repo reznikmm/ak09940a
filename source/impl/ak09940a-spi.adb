@@ -3,8 +3,6 @@
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 ----------------------------------------------------------------
 
-pragma Ada_2022;
-
 with AK09940A.Internal;
 
 package body AK09940A.SPI is
@@ -142,7 +140,7 @@ package body AK09940A.SPI is
       SPI.SPI_CS.Clear;
 
       SPI_Port.Transmit
-        (HAL.SPI.SPI_Data_8b'[Addr, HAL.UInt8 (Data)],
+        (HAL.SPI.SPI_Data_8b'(Addr, HAL.UInt8 (Data)),
          Status);
 
       SPI.SPI_CS.Set;

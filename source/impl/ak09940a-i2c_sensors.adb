@@ -3,8 +3,6 @@
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 ----------------------------------------------------------------
 
-pragma Ada_2022;
-
 with AK09940A.Internal;
 
 package body AK09940A.I2C_Sensors is
@@ -70,7 +68,9 @@ package body AK09940A.I2C_Sensors is
          Data          => Output,
          Status        => Status);
 
-      Data := [for J of Output => Interfaces.Unsigned_8 (J)];
+      for J in Output'Range loop
+         Data (J) := Interfaces.Unsigned_8 (Output (J));
+      end loop;
 
       Success := Status = HAL.I2C.Ok;
    end Read;
@@ -129,7 +129,7 @@ package body AK09940A.I2C_Sensors is
         (Addr          => 2 * HAL.UInt10 (Self.I2C_Address),
          Mem_Addr      => HAL.UInt16 (Address),
          Mem_Addr_Size => HAL.I2C.Memory_Size_8b,
-         Data          => [HAL.UInt8 (Data)],
+         Data          => (1 => HAL.UInt8 (Data)),
          Status        => Status);
 
       Success := Status = HAL.I2C.Ok;

@@ -3,8 +3,6 @@
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 ----------------------------------------------------------------
 
-pragma Ada_2022;
-
 with Ada.Real_Time;
 with Ada.Text_IO;
 
@@ -25,11 +23,11 @@ with Signals;
 procedure Main is
    use type Ada.Real_Time.Time;
 
-   SPI      renames STM32.Device.SPI_2;
-   SPI_SCK  renames STM32.Device.PB13;
-   SPI_MISO renames STM32.Device.PB14;
-   SPI_MOSI renames STM32.Device.PB15;
-   SPI_CS   renames STM32.Device.PB11;
+   SPI      : STM32.SPI.SPI_Port renames STM32.Device.SPI_2;
+   SPI_SCK  : STM32.GPIO.GPIO_Point renames STM32.Device.PB13;
+   SPI_MISO : STM32.GPIO.GPIO_Point renames STM32.Device.PB14;
+   SPI_MOSI : STM32.GPIO.GPIO_Point renames STM32.Device.PB15;
+   SPI_CS   : STM32.GPIO.GPIO_Point renames STM32.Device.PB11;
 
    package AK09940A_SPI is new AK09940A.SPI
      (SPI_Port => SPI'Access,
@@ -45,7 +43,7 @@ procedure Main is
    procedure Setup_SPI_2 is
 
       SPI_Pins : constant STM32.GPIO.GPIO_Points :=
-        [SPI_SCK, SPI_MISO, SPI_MOSI, SPI_CS];
+        (SPI_SCK, SPI_MISO, SPI_MOSI, SPI_CS);
    begin
       STM32.Device.Enable_Clock (SPI_Pins);
 
