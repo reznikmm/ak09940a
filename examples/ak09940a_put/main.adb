@@ -1,9 +1,7 @@
---  SPDX-FileCopyrightText: 2024 Max Reznik <reznikmm@gmail.com>
+--  SPDX-FileCopyrightText: 2024-2025 Max Reznik <reznikmm@gmail.com>
 --
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 ----------------------------------------------------------------
-
-pragma Ada_2022;
 
 with Ada.Real_Time;
 with Ada.Text_IO;
@@ -45,7 +43,7 @@ begin
       --  Workaround for STM32 I2C driver bug
       STM32.Device.I2C_1.Master_Transmit
         (Addr    => 16#18#,  --  0C * 2
-         Data    => [16#00#],  --  Chip ID for AK09940A
+         Data    => (1 => 16#00#),  --  Chip ID for AK09940A
          Status  => Status);
    end;
 

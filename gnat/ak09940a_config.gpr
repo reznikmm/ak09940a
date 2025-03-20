@@ -21,6 +21,7 @@ abstract project Ak09940a_Config is
            ,"-gnatn" -- Enable inlining
            ,"-ffunction-sections" -- Separate ELF section for each function
            ,"-fdata-sections" -- Separate ELF section for each variable
+           ,"-gnatW8" -- UTF-8 encoding for wide characters
           );
 
    type Build_Profile_Kind is ("release", "validation", "development");

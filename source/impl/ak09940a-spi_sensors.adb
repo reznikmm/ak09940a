@@ -3,8 +3,6 @@
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 ----------------------------------------------------------------
 
-pragma Ada_2022;
-
 with AK09940A.Internal;
 
 package body AK09940A.SPI_Sensors is
@@ -81,7 +79,9 @@ package body AK09940A.SPI_Sensors is
 
       if Status = Ok then
          Self.SPI_Port.Receive (Output, Status);
-         Data := [for J of Output => Interfaces.Unsigned_8 (J)];
+         for J in Output'Range loop
+            Data (J) := Interfaces.Unsigned_8 (Output (J));
+         end loop;
       end if;
 
       Self.SPI_CS.Set;
@@ -142,7 +142,7 @@ package body AK09940A.SPI_Sensors is
       Self.SPI_CS.Clear;
 
       Self.SPI_Port.Transmit
-        (HAL.SPI.SPI_Data_8b'[Addr, HAL.UInt8 (Data)],
+        (HAL.SPI.SPI_Data_8b'(Addr, HAL.UInt8 (Data)),
          Status);
 
       Self.SPI_CS.Set;

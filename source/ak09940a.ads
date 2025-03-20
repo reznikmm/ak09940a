@@ -71,6 +71,9 @@ package AK09940A is
       X, Y, Z : Magnetic_Field;
    end record;
 
+   type Deci_Celsius is range -44_7 .. 105_3;
+   --  1 degree celsius is 10 Deci_Celsius
+
    use type Interfaces.Integer_32;
 
    subtype Raw_Magnetic_Field is Interfaces.Integer_32
@@ -84,13 +87,13 @@ package AK09940A is
 
    subtype I2C_Address_Range is Interfaces.Unsigned_8 range 16#0C# .. 16#0F#;
 
-private
    AK09940A_Chip_Id : constant := 16#A3#;
 
-   subtype Register_Address is Natural range 16#00# .. 16#7F#;
+   subtype Register_Address is Natural range 16#00# .. 16#FF#;
    --  Sensor registers addresses
 
-   type Byte_Array is
-     array (Register_Address range <>) of Interfaces.Unsigned_8;
+   subtype Byte is Interfaces.Unsigned_8;  --  Register value
+
+   type Byte_Array is array (Register_Address range <>) of Byte;
 
 end AK09940A;
