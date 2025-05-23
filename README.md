@@ -34,6 +34,9 @@ Add `ak09940a` as a dependency to your crate with Alire:
 
 ## Usage
 
+The sensor supports SPI (mode 3, no auto-increment address on write)
+with a frequency of up to 3.3 MHz and I2C at frequencies up to 400 kHz.
+
 The driver implements two usage models: the generic package, which is more
 convenient when dealing with a single sensor, and the tagged type, which
 allows easy creation of objects for any number of sensors and uniform handling.
