@@ -10,6 +10,23 @@ website = "https://github.com/reznikmm/ak09940a"
 tags = ["sensor", "magnetometer", "driver"]
 project-files = ["gnat/ak09940a.gpr"]
 
+long-description = '''
+# Driver for AK09940A magnetic sensor.
+
+The AK09940A driver enables the following functionalities:
+
+- Detect the presence of the sensor.
+- Perform soft reset
+- Configure the sensor (operation mode, frequency, drive)
+- Conduct measurements as raw 18-bit values or scaled values
+
+The driver supports usage both with and without the Ada Driver Library,
+either via generic instantiation or by instantiating tagged type object.
+
+More drivers in this style:
+[driver index](https://github.com/reznikmm/reznikmm/blob/main/drivers.md).
+'''
+
 [configuration]
 output_dir = "gnat"
 generate_ada = false
