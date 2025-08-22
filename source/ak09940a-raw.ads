@@ -33,12 +33,20 @@ package AK09940A.Raw is
        with Pre => Chip_Id_Data'Last in Raw'Range;
    --  Read the chip ID. Raw data should contain Chip_Id_Data'Last item.
 
-   subtype Configuration_Data is Byte_Array (16#30# .. 16#32#);
-   --  CNTL1: Control 1 .. CNTL3: Control 3
+   subtype Control_1_Data is Byte_Array (16#30# .. 16#30#);
+   --  CNTL1: Control 1
 
-   function Set_Configuration
-     (Value : Sensor_Configuration) return Configuration_Data;
-   --  Write CNTL1 .. CNTL3 Registers
+   function Set_Control_1 (Value : Sensor_Configuration) return Control_1_Data;
+   --  Write CNTL1 Register. This includes watermark level, trigger pin, Ultra
+   --  low power drive
+
+   --  CNTL2: Control 2 is not very interesting, has temperature sensor switch
+
+   subtype Control_3_Data is Byte_Array (16#32# .. 16#32#);
+   --  CNTL3: Control 3
+
+   function Set_Control_3 (Value : Sensor_Configuration) return Control_3_Data;
+   --  Write CNTL3 Register. This includes mode, sensor drive, FIFO switch
 
    Reset_Data : constant Byte_Array (16#33# .. 16#33#) := (16#33# => 1);
    --  CNTL4: Control 4. SRST: Soft reset
@@ -93,9 +101,10 @@ package AK09940A.Raw is
    --  the highest bit on (1).
 
    function SPI_Write (X : Byte_Array) return Byte_Array is
-     ((X'First - 1 => SPI_Write (X'First)) & X);
+     ((X'First - 1 => SPI_Write (X'First)) & X)
+       with Pre => X'Length = 1;
    --  Prefix the byte array with the register address for the SPI write
-   --  operation
+   --  operation. The chip is able to write a single register in one go.
 
    function SPI_Read (X : Byte_Array) return Byte_Array is
      ((X'First - 1 => SPI_Read (X'First)) & X);
@@ -103,7 +112,8 @@ package AK09940A.Raw is
    --  operation
 
    function I2C_Write (X : Byte_Array) return Byte_Array is
-     ((X'First - 1 => Byte (X'First)) & X);
+     ((X'First - 1 => Byte (X'First)) & X)
+       with Pre => X'Length = 1;
    --  Prefix the byte array with the register address for the I2C write
    --  operation
 

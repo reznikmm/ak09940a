@@ -32,12 +32,13 @@ package body AK09940A.Internal is
       Value   : Sensor_Configuration;
       Success : out Boolean)
    is
-      Data : constant Raw.Configuration_Data := Raw.Set_Configuration (Value);
+      Control_1 : constant Raw.Control_1_Data := Raw.Set_Control_1 (Value);
+      Control_3 : constant Raw.Control_3_Data := Raw.Set_Control_3 (Value);
    begin
-      Write (Device, Data'First, Data (Data'First), Success);
+      Write (Device, Control_1'First, Control_1 (Control_1'First), Success);
 
       if Success then
-         Write (Device, Data'Last, Data (Data'Last), Success);
+         Write (Device, Control_3'Last, Control_3 (Control_3'Last), Success);
       end if;
    end Configure;
 

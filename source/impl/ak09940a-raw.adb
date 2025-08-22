@@ -66,13 +66,7 @@ package body AK09940A.Raw is
       return Deci_Celsius (Result);
    end Get_Temperature;
 
-   -----------------------
-   -- Set_Configuration --
-   -----------------------
-
-   function Set_Configuration
-     (Value : Sensor_Configuration) return Configuration_Data
-   is
+   function Set_Control_1 (Value : Sensor_Configuration) return Control_1_Data is
       type Control_Register_1 is record
          WM       : Natural range 0 .. 7;
          Zero     : Natural range 0 .. 0 := 0;
@@ -92,6 +86,23 @@ package body AK09940A.Raw is
       function Cast_1 is new Ada.Unchecked_Conversion
         (Control_Register_1, Interfaces.Unsigned_8);
 
+      WM : constant Natural := Positive (Value.Watermark) - 1;
+      DTSET : constant Boolean := Value.Trigger_Pin;
+      MT2 : constant Boolean := Value.Drive = Ultra_Low_Power_Drive;
+
+      Data_30 : constant Interfaces.Unsigned_8 :=
+        Cast_1 ((WM => WM, DTSET => DTSET, MT2 => MT2, others => <>));
+   begin
+      return (Control_1_Data'First => Data_30);
+   end Set_Control_1;
+
+   -------------------
+   -- Set_Control_3 --
+   -------------------
+
+   function Set_Control_3
+     (Value : Sensor_Configuration) return Control_3_Data
+   is
       type Control_Register_3 is record
          MODE     : Natural range 0 .. 16;
          MT       : Natural range 0 .. 3;
@@ -127,17 +138,10 @@ package body AK09940A.Raw is
       MT   : constant Natural :=
         Natural'Max (0, Sensor_Drive'Pos (Value.Drive) - 1);
 
-      WM : constant Natural := Positive (Value.Watermark) - 1;
-      DTSET : constant Boolean := Value.Trigger_Pin;
-      MT2 : constant Boolean := Value.Drive = Ultra_Low_Power_Drive;
-
-      Data_30 : constant Interfaces.Unsigned_8 :=
-        Cast_1 ((WM => WM, DTSET => DTSET, MT2 => MT2, others => <>));
-      Data_31 : constant Interfaces.Unsigned_8 := 2#0100_0000#;
       Data_32 : constant Interfaces.Unsigned_8 :=
         Cast_3 ((MODE => Mode, MT => MT, FIFO => Value.Use_FIFO));
    begin
-      return (Data_30, Data_31, Data_32);
-   end Set_Configuration;
+      return (Control_3_Data'First => Data_32);
+   end Set_Control_3;
 
 end AK09940A.Raw;
