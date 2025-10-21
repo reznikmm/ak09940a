@@ -8,7 +8,7 @@
 with Interfaces;
 
 package AK09940A is
-   pragma Preelaborate;
+   pragma Pure;
    pragma Discard_Names;
 
    type Operating_Mode is
