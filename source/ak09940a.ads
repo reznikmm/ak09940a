@@ -5,6 +5,7 @@
 
 --  Top level package for 3-axis magnetic sensor AK09940A
 
+with Ada.Unchecked_Conversion;
 with Interfaces;
 
 package AK09940A is
@@ -71,9 +72,6 @@ package AK09940A is
       X, Y, Z : Magnetic_Field;
    end record;
 
-   type Deci_Celsius is range -44_7 .. 105_3;
-   --  1 degree celsius is 10 Deci_Celsius
-
    use type Interfaces.Integer_32;
 
    subtype Raw_Magnetic_Field is Interfaces.Integer_32
@@ -85,6 +83,19 @@ package AK09940A is
    --  A value read from the sensor in raw format. The output data of each
    --  channel saturates at -131072 and 131071.
 
+   function To_Magnetic_Field (Raw : Raw_Magnetic_Field) return Magnetic_Field;
+   --  Convert raw sensor data to magnetic field
+
+   function To_Magnetic_Field_Vector
+     (Raw : Raw_Vector) return Magnetic_Field_Vector;
+   --  Convert raw sensor data to magnetic field vector
+
+   type Celsius is delta 1.0 / 2.0**4 range -45.0 .. 106.0;
+   --  Temperature in celsius degree
+
+   function To_Celsius (Raw : Interfaces.Unsigned_8) return Celsius;
+   --  Convert raw sensor temperature data to celsius degree
+
    subtype I2C_Address_Range is Interfaces.Unsigned_8 range 16#0C# .. 16#0F#;
 
    AK09940A_Chip_Id : constant := 16#A3#;
@@ -95,5 +106,29 @@ package AK09940A is
    subtype Byte is Interfaces.Unsigned_8;  --  Register value
 
    type Byte_Array is array (Register_Address range <>) of Byte;
+
+private
+
+   function To_Integer_8 is new Ada.Unchecked_Conversion
+     (Byte, Interfaces.Integer_8);
+
+   Celsius_Scale : constant := 1.0 / Celsius'Small / 1.7;
+   --  Sensitivity 1.7 LSB/℃
+
+   function To_Celsius (Raw : Interfaces.Unsigned_8) return Celsius is
+      (30.0 - Celsius'Small * Integer (To_Integer_8 (Raw)) * Celsius_Scale);
+
+   Scale : constant := 1.0 / Magnetic_Field'Small / 10_000.0;
+   --  Sensitivity 10000 LSB/G
+
+   function To_Magnetic_Field
+     (Raw : Raw_Magnetic_Field) return Magnetic_Field is
+        (Magnetic_Field'Small * Integer (Raw) * Scale);
+
+   function To_Magnetic_Field_Vector
+     (Raw : Raw_Vector) return Magnetic_Field_Vector is
+       (To_Magnetic_Field (Raw.X),
+        To_Magnetic_Field (Raw.Y),
+        To_Magnetic_Field (Raw.Z));
 
 end AK09940A;

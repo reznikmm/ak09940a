@@ -75,7 +75,7 @@ package AK09940A.Raw is
 
    subtype Measurement_Data is Byte_Array (16#11# .. 16#1B#);
 
-   function Get_Measurement (Raw : Byte_Array) return Magnetic_Field_Vector
+   function Get_Measurement (Raw  : Byte_Array) return Magnetic_Field_Vector
      with Pre => Measurement_Data'First in Raw'Range
        and then 16#19# in Raw'Range;
 
@@ -83,7 +83,10 @@ package AK09940A.Raw is
      with Pre => Measurement_Data'First in Raw'Range
        and then 16#19# in Raw'Range;
 
-   function Get_Temperature (Raw : Byte_Array) return Deci_Celsius
+   function Get_Temperature (Raw : Byte_Array) return Celsius
+     with Pre => 16#1A# in Raw'Range;
+
+   function Get_Raw_Temperature (Raw : Byte_Array) return Byte
      with Pre => 16#1A# in Raw'Range;
 
    ----------------------------------
@@ -120,5 +123,16 @@ package AK09940A.Raw is
    function I2C_Read (X : Byte_Array) return Byte_Array renames I2C_Write;
    --  Prefix the byte array with the register address for the I2C read
    --  operation
+
+private
+
+   function Get_Measurement (Raw  : Byte_Array) return Magnetic_Field_Vector is
+     (To_Magnetic_Field_Vector (Get_Raw_Measurement (Raw)));
+
+   function Get_Raw_Temperature (Raw : Byte_Array) return Byte is
+     (Raw (16#1A#));
+
+   function Get_Temperature (Raw : Byte_Array) return Celsius is
+     (To_Celsius (Get_Raw_Temperature (Raw)));
 
 end AK09940A.Raw;

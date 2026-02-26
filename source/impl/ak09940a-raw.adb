@@ -7,25 +7,6 @@ with Ada.Unchecked_Conversion;
 
 package body AK09940A.Raw is
 
-   ---------------------
-   -- Get_Measurement --
-   ---------------------
-
-   function Get_Measurement (Raw  : Byte_Array) return Magnetic_Field_Vector is
-      Scale : constant := 2.0 ** 14 / 10_000.0;  --  Sensitivity 10000 LSB/G
-      Data  : constant Raw_Vector := Get_Raw_Measurement (Raw);
-
-      Value : constant Magnetic_Field_Vector :=
-        (X => Magnetic_Field'Small * Integer (Data.X),
-         Y => Magnetic_Field'Small * Integer (Data.Y),
-         Z => Magnetic_Field'Small * Integer (Data.Z));
-   begin
-      return
-        (X => Value.X * Scale,
-         Y => Value.Y * Scale,
-         Z => Value.Z * Scale);
-   end Get_Measurement;
-
    -------------------------
    -- Get_Raw_Measurement --
    -------------------------
@@ -50,23 +31,13 @@ package body AK09940A.Raw is
          Z => Decode (Raw (16#17# .. 16#19#)));
    end Get_Raw_Measurement;
 
-   ---------------------
-   -- Get_Temperature --
-   ---------------------
+   -------------------
+   -- Set_Control_1 --
+   -------------------
 
-   function Get_Temperature (Raw : Byte_Array) return Deci_Celsius is
-      use type Interfaces.Integer_16;
-
-      function Cast is new Ada.Unchecked_Conversion
-        (Byte, Interfaces.Integer_8);
-
-      Result : constant Interfaces.Integer_16 :=
-        (5100 - 100 * Interfaces.Integer_16 (Cast (Raw (16#1A#)))) / 17;
-   begin
-      return Deci_Celsius (Result);
-   end Get_Temperature;
-
-   function Set_Control_1 (Value : Sensor_Configuration) return Control_1_Data is
+   function Set_Control_1
+     (Value : Sensor_Configuration) return Control_1_Data
+   is
       type Control_Register_1 is record
          WM       : Natural range 0 .. 7;
          Zero     : Natural range 0 .. 0 := 0;

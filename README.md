@@ -8,7 +8,7 @@
 
 - [Official website](https://www.akm.com/eu/en/products/tri-axis-magnetic-sensor/lineup-tri-axis-magnetic-sensor/ak09940a/)
 
-Key Features
+**Key Features**
 
 - Low noise of 120nTrms and ultra-low current consumption of 16μA@100Hz make
   it suitable for devices that use small-capacity batteries.
@@ -25,6 +25,10 @@ The AK09940A driver enables the following functionalities:
 - Perform soft reset
 - Configure the sensor (operation mode, frequency, drive)
 - Conduct measurements as raw 18-bit values and scaled values.
+
+**Note!** This sensor does not have embedded temperature compensation.
+Use the built-in temperature sensor to perform temperature compensation
+manually.
 
 ## Install
 
